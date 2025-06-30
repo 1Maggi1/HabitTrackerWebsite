@@ -1,0 +1,26 @@
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(14, 1fr); /* 7 Tage pro Woche */
+        gap: 4px;
+        max-width: 400px;
+        margin-top: 20px;
+    }
+
+    .day-box {
+        width: 40px;
+        height: 40px;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        border-radius: 4px;
+        background-color: #eee;
+        color: #333;
+    }
+
+    .level-0 { background-color: #eee; }
+    .level-1 { background-color: #a0d468; }
+    .level-2 { background-color: #7cc957; }
+    .level-3 { background-color: #5cb85c; }
+    .level-4 { background-color: #4cae4c; }

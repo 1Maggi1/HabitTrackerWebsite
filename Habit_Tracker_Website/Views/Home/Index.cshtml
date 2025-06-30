@@ -1,30 +1,47 @@
 ﻿@using HabitTracker.Models;
-@model IEnumerable<Habit>
+@model HabitTracker.Models.HomeViewModel
+
 @{
+    var today = DateTime.Today;
+    var start = today.AddDays(-60);
     ViewData["Title"] = "Home Page";
 }
 
+<head>
+    <link rel="stylesheet" href="~/css/homeStyle.css"/>
+</head>
 <body>
     <!-- Main View  -->
     <div class="text-center">
         <h1 class="display-4">Overview</h1>
         <div class="row">
             <div class="col-8">
+                <div class="calendar-grid">
+                @for (var day = start; day <= today; day = day.AddDays(1))
+                {
+                    var dateOnly = DateOnly.FromDateTime(day);
+                    var count = Model.CompletedHabitsByDay.TryGetValue(dateOnly, out var val) ? val : 0;
+                    var intensity = Math.Min(count, 4);
 
-            </div>
-            <div class="col-4">
-                <h2>Habits:
-                </h2>
-                <ul class="list-group">
-                    @foreach (var habit in Model)
-                    {
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span class="habit-name">@habit.Name</span>
-                        </li>
-                    }
-                </ul>
+                    <div class="day-box level-@intensity" title="@dateOnly">
+                        @day.Day
+                    </div>
+                }
             </div>
         </div>
+        <div class="col-4">
+            <h2>Active Habits:
+            </h2>
+            <ul class="list-group">
+                @foreach (var habit in Model.Habits)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="habit-name">@habit.Name</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
     </div>
 
     <!-- Modal-Container -->
