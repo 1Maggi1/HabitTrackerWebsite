@@ -17,9 +17,22 @@ public class HomeController : Controller
     }
 
     public IActionResult Index()
+{
+    var habits = _habitRepository.GetAllHabits();
+    
+    var completedHabitsByDay = habits
+        .SelectMany(h => h.CompletedDates)
+        .GroupBy(date => date)
+        .ToDictionary(g => g.Key, g => g.Count());
+
+    var model = new HomeViewModel
     {
-        return View(_habitRepository.GetAllHabits());
-    }
+        Habits = habits,
+        CompletedHabitsByDay = completedHabitsByDay
+    };
+
+    return View(model);
+}
 
     public IActionResult Statistics()
     {
