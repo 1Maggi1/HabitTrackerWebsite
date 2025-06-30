@@ -8,7 +8,7 @@ public class DatabaseHabitRepository(HabitTrackerContext context)
     {
         return context.Habits.ToList();
     }
-    
+
     public void Create(Habit habit)
     {
         if (habit == null || Exists(habit) || Exists(habit.Id))
@@ -34,7 +34,7 @@ public class DatabaseHabitRepository(HabitTrackerContext context)
         var existingHabit = context.Habits.Find(habit.Id);
         if (existingHabit != null)
         {
-            existingHabit.completedDates.Add(DateOnly.FromDateTime(DateTime.Now));
+            existingHabit.CompletedDates.Add(DateOnly.FromDateTime(DateTime.Now));
         }
         context.SaveChanges();
     }

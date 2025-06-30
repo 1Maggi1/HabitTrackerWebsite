@@ -6,3 +6,66 @@
     <h1 class="display-4">Welcome</h1>
     <p class="lead">This is a simple Habit Tracker application.</p>
 </div>
+
+<!-- Modal-Container -->
+<div class="modal fade" id="habitModal" tabindex="-1" aria-labelledby="habitModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="habitModalLabel">New Habit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="habitModalBody">
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openHabitModal() {
+            $.get("/Habit/Create", function (data) {
+                $("#habitModalBody").html(data);
+                var myModal = new bootstrap.Modal(document.getElementById('habitModal'));
+                myModal.show();
+
+                setTimeout(() => {
+                    bindHabitFormSubmit();
+                }, 100);
+            });
+        }
+
+        function bindHabitFormSubmit() {
+            $('#habitForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const form = $(this);
+                $.ajax({
+                    type: "POST",
+                    url: "/Habit/Create",
+                    data: form.serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            var modal = bootstrap.Modal.getInstance(document.getElementById('habitModal'));
+                            modal.hide();
+                            location.reload();
+                        } else {
+                            $("#habitModalBody").html(response);
+                        }
+                    },
+                    error: function () {
+                        alert("Fehler beim Speichern des Habits.");
+                    }
+                });
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById("addHabitBtn");
+            if (btn) {
+                btn.addEventListener("click", openHabitModal);
+            }
+        });
+    </script>
+}
