@@ -17,22 +17,25 @@ public class HomeController : Controller
     }
 
     public IActionResult Index()
-{
-    var habits = _habitRepository.GetAllHabits();
-    
-    var completedHabitsByDay = habits
-        .SelectMany(h => h.CompletedDates)
-        .GroupBy(date => date)
-        .ToDictionary(g => g.Key, g => g.Count());
-
-    var model = new HomeViewModel
     {
-        Habits = habits,
-        CompletedHabitsByDay = completedHabitsByDay
-    };
+        var habits = _habitRepository.GetAllHabits();
 
-    return View(model);
-}
+        var completedHabitsPerDay = habits
+            .SelectMany(h => h.CompletedDates.Select(date => new { Habit = h, Date = date }))
+            .GroupBy(x => x.Date)
+            .ToDictionary(g => g.Key, g => g.Select(x => x.Habit).ToList());
+
+        var completedHabitsByDay = completedHabitsPerDay.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Count);
+
+        var vm = new HomeViewModel
+        {
+            Habits = habits,
+            CompletedHabitsByDay = completedHabitsByDay,
+            CompletedHabitsPerDay = completedHabitsPerDay
+        };
+
+        return View(vm);
+    }
 
     public IActionResult Statistics()
     {

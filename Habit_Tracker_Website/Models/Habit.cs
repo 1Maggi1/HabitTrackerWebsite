@@ -19,7 +19,7 @@ public class Habit
     public List<DateOnly> CompletedDates { get; set; } = new();
 
     [Required]
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
     public override bool Equals(object? obj)
     {

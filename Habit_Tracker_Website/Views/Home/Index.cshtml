@@ -8,8 +8,9 @@
 }
 
 <head>
-    <link rel="stylesheet" href="~/css/homeStyle.css"/>
+    <link rel="stylesheet" href="~/css/homeStyle.css" />
 </head>
+
 <body>
     <!-- Main View  -->
     <div class="text-center">
@@ -17,47 +18,60 @@
         <div class="row">
             <div class="col-8">
                 <div class="calendar-grid">
-                @for (var day = start; day <= today; day = day.AddDays(1))
-                {
-                    var dateOnly = DateOnly.FromDateTime(day);
-                    var count = Model.CompletedHabitsByDay.TryGetValue(dateOnly, out var val) ? val : 0;
-                    var intensity = Math.Min(count, 4);
+                    @for (var day = start; day <= today; day = day.AddDays(1))
+                    {
+                        var dateOnly = DateOnly.FromDateTime(day);
+                        var count = Model.CompletedHabitsByDay.TryGetValue(dateOnly, out var val) ? val : 0;
+                        var intensity = Math.Min(count, 4);
 
-                    <div class="day-box level-@intensity" title="@dateOnly">
-                        @day.Day
+                        <div class="day-box level-@intensity" title="@dateOnly.ToString("yyyy-MM-dd")">
+                            @day.Day
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-4">
+                <h2>Active Habits:
+                </h2>
+                <ul class="list-group">
+                    @foreach (var habit in Model.Habits)
+                    {
+                        if (habit.IsActive)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="habit-name">@habit.Name</span>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="row mt-10">
+                <div id="dayDetails" class="col-8">
+                    <h4>Details for: <span id="selectedDate">No day selected</span></h4>
+                    <ul id="habitDetailsList" class="list-group">
+
+                    </ul>
+                </div>
+                <div class="col-4">
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal-Container -->
+        <div class="modal fade" id="habitModal" tabindex="-1" aria-labelledby="habitModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="habitModalLabel">New Habit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                }
-            </div>
-        </div>
-        <div class="col-4">
-            <h2>Active Habits:
-            </h2>
-            <ul class="list-group">
-                @foreach (var habit in Model.Habits)
-                {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span class="habit-name">@habit.Name</span>
-                    </li>
-                }
-            </ul>
-        </div>
-    </div>
-    </div>
+                    <div class="modal-body" id="habitModalBody">
 
-    <!-- Modal-Container -->
-    <div class="modal fade" id="habitModal" tabindex="-1" aria-labelledby="habitModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="habitModalLabel">New Habit</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="habitModalBody">
-
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 </body>
 
 @section Scripts {
@@ -93,7 +107,7 @@
                         }
                     },
                     error: function () {
-                        alert("Fehler beim Speichern des Habits.");
+                        alert("Error when saving habit.");
                     }
                 });
             });
@@ -104,6 +118,45 @@
             if (btn) {
                 btn.addEventListener("click", openHabitModal);
             }
+            const today = new Date().toISOString().split('T')[0]; // "yyyy-MM-dd"
+            const todayBox = document.querySelector(`.day-box[title='${today}']`);
+            if (todayBox) {
+                todayBox.click();
+            }
+        });
+
+        const habitDataPerDay = {
+                @foreach (var entry in Model.CompletedHabitsPerDay)
+            {
+                var dateKey = entry.Key.ToString("yyyy-MM-dd");
+                var names = entry.Value.Select(h => h.Name).ToList();
+                <text>"@dateKey": @Html.Raw(Json.Serialize(names)),</text>
+        }
+            };
+
+        document.querySelectorAll('.day-box').forEach(box => {
+            box.addEventListener('click', function () {
+                const selectedDate = this.getAttribute('title');
+                document.getElementById('selectedDate').innerText = selectedDate;
+
+                const list = document.getElementById('habitDetailsList');
+                list.innerHTML = "";
+
+                const habits = habitDataPerDay[selectedDate];
+                if (habits && habits.length > 0) {
+                    habits.forEach(h => {
+                        const li = document.createElement('li');
+                        li.className = "list-group-item";
+                        li.textContent = h;
+                        list.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.className = "list-group-item";
+                    li.textContent = "Keine Habits abgeschlossen.";
+                    list.appendChild(li);
+                }
+            });
         });
     </script>
 }
