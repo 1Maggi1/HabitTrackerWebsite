@@ -1,26 +1,47 @@
-﻿@{
+﻿@using HabitTracker.Models;
+@model IEnumerable<Habit>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p class="lead">This is a simple Habit Tracker application.</p>
-</div>
+<body>
+    <!-- Main View  -->
+    <div class="text-center">
+        <h1 class="display-4">Overview</h1>
+        <div class="row">
+            <div class="col-8">
 
-<!-- Modal-Container -->
-<div class="modal fade" id="habitModal" tabindex="-1" aria-labelledby="habitModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="habitModalLabel">New Habit</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="habitModalBody">
-               
+            <div class="col-4">
+                <h2>Habits:
+                </h2>
+                <ul class="list-group">
+                    @foreach (var habit in Model)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="habit-name">@habit.Name</span>
+                        </li>
+                    }
+                </ul>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Modal-Container -->
+    <div class="modal fade" id="habitModal" tabindex="-1" aria-labelledby="habitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="habitModalLabel">New Habit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="habitModalBody">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 
 @section Scripts {
     <script>
