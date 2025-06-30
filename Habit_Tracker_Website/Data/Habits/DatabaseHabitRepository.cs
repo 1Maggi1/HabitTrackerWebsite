@@ -11,6 +11,10 @@ public class DatabaseHabitRepository(HabitTrackerContext context)
     
     public void Create(Habit habit)
     {
+        if (habit == null || Exists(habit) || Exists(habit.Id))
+        {
+            throw new ArgumentException("Habit is null or already exists.");
+        }
         context.Habits.Add(habit);
         context.SaveChanges();
     }
