@@ -15,7 +15,7 @@
     <!-- Main View  -->
     <div class="text-center">
         <h1 class="display-4">Overview</h1>
-        <div class="row">
+        <div class="row mb-10">
             <div class="col-8">
                 <div class="calendar-grid">
                     @for (var day = start; day <= today; day = day.AddDays(1))
@@ -45,16 +45,16 @@
                     }
                 </ul>
             </div>
-            <div class="row mt-10">
-                <div id="dayDetails" class="col-8">
-                    <h4>Details for: <span id="selectedDate">No day selected</span></h4>
-                    <ul id="habitDetailsList" class="list-group">
+        </div>
+        <div class="row mt-5">
+            <div id="dayDetails" class="col-8 p-3">
+                <h4>Details for: <span id="selectedDate">No day selected</span></h4>
+                <ul id="habitDetailsList" class="list-group">
 
-                    </ul>
-                </div>
-                <div class="col-4">
+                </ul>
+            </div>
+            <div class="col-4">
 
-                </div>
             </div>
         </div>
 
@@ -153,7 +153,7 @@
                 } else {
                     const li = document.createElement('li');
                     li.className = "list-group-item";
-                    li.textContent = "Keine Habits abgeschlossen.";
+                    li.textContent = "No habits done for this day.";
                     list.appendChild(li);
                 }
             });
